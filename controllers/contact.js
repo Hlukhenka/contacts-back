@@ -8,7 +8,7 @@ const getContact = async (req, res) => {
   const { email, number } = req.query;
 
   if (!email && !number) {
-    return res.status(404).json({ message: "Not found" });
+    throw HttpError("400", "Bad Request");
   }
 
   let query = {};
@@ -28,13 +28,16 @@ const getContact = async (req, res) => {
   currentTimeout = setTimeout(async () => {
     try {
       const result = await Contact.find(query);
+
+      if (!result) {
+        throw HttpError(404, "Not Found");
+      }
       res.status(200).json(result);
     } catch (err) {
       res.status(500).json({ message: "Server error" });
     }
     currentTimeout = null;
   }, 5000);
-
 };
 
 const registerContact = async (req, res) => {
