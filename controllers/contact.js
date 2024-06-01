@@ -25,13 +25,11 @@ const getContact = async (req, res) => {
     currentTimeout = null;
   }
 
-  const result = await Contact.find(query);
-
-  if (!result || result.length === 0) {
-    throw HttpError(404, "Not Found");
-  }
-
   currentTimeout = setTimeout(async () => {
+    const result = await Contact.find(query);
+    if (!result || result.length === 0) {
+      return res.status(404).json({ message: "Not Found" });
+    }
     res.status(200).json(result);
     currentTimeout = null;
   }, 5000);
